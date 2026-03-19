@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Timer Tapis Roulant 0–5K</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Manifest per PWA -->
+  <link rel="manifest" href="manifest.json" />
   <style>
     :root {
       --bg: #050816;
       --card: #0b1020;
       --running-grad: linear-gradient(135deg, #22c55e, #14b8a6);
       --walk-grad: linear-gradient(135deg, #f97316, #ec4899);
+      --warmup-grad: linear-gradient(135deg, #eab308, #f97316);
+      --cooldown-grad: linear-gradient(135deg, #3b82f6, #22c55e);
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
       --accent: #38bdf8;
@@ -55,27 +59,23 @@
       color: var(--text-muted);
       text-transform: uppercase;
     }
-    .controls {
+    .selectors {
       display: flex;
-      gap: 6px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
     }
     select {
       flex: 1;
-      min-width: 100px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: rgba(15, 23, 42, 0.85);
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
       color: var(--text-main);
       font-size: 13px;
-      cursor: pointer;
     }
     select:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
     }
     .phase-card {
       border-radius: 18px;
@@ -84,12 +84,10 @@
       position: relative;
       overflow: hidden;
     }
-    .phase-running {
-      background-image: var(--running-grad);
-    }
-    .phase-walk {
-      background-image: var(--walk-grad);
-    }
+    .phase-running { background-image: var(--running-grad); }
+    .phase-walk { background-image: var(--walk-grad); }
+    .phase-warmup { background-image: var(--warmup-grad); }
+    .phase-cooldown { background-image: var(--cooldown-grad); }
     .phase-label {
       font-size: 14px;
       text-transform: uppercase;
@@ -192,11 +190,11 @@
 <div class="app">
   <header>
     <div class="title">0–5K Tapis Timer</div>
-    <div class="badge" id="badge">Week 1 · Run 1</div>
+    <div id="badge" class="badge">Week 1 · Run 1</div>
   </header>
 
-  <div class="controls">
-    <select id="weekSelect" onchange="updateWorkout()">
+  <div class="selectors">
+    <select id="weekSelect">
       <option value="W1">Settimana 1</option>
       <option value="W2">Settimana 2</option>
       <option value="W3">Settimana 3</option>
@@ -208,14 +206,14 @@
       <option value="W9">Settimana 9</option>
       <option value="W10">Settimana 10</option>
     </select>
-    <select id="sessionSelect" onchange="updateWorkout()">
+    <select id="sessionSelect">
       <option value="A1">Allenamento 1</option>
       <option value="A2">Allenamento 2</option>
     </select>
   </div>
 
-  <div id="phaseCard" class="phase-card phase-walk">
-    <div id="phaseLabel" class="phase-label">Premi START</div>
+  <div id="phaseCard" class="phase-card phase-warmup">
+    <div id="phaseLabel" class="phase-label">Seleziona e premi START</div>
     <div id="time" class="time">00:00</div>
     <div id="details" class="details">—</div>
     <div id="subdetails" class="subdetails">Prossimo: —</div>
@@ -232,7 +230,7 @@
   </div>
 
   <div class="info-row">
-    <div id="totalTime">Totale: ~25 min</div>
+    <div id="totalTime">Totale: —</div>
     <div id="status">Pronto</div>
   </div>
 
@@ -241,281 +239,296 @@
     <button id="pauseBtn" class="btn-secondary" disabled>Pausa</button>
     <button id="resetBtn" class="btn-danger" disabled>Reset</button>
   </div>
-  <div class="hint">Tip: appoggia il telefono sul tappeto e segui velocità e pendenza sul display.</div>
+  <div class="hint">
+    Riscaldamento 5' e defaticamento 5' sono inclusi nel timer.
+  </div>
 </div>
 
 <script>
-  const workoutData = {
-    W1: {
-      A1: {
-        total: "~25 min",
-        description: "(1' corsa / 2' camminata) × 6",
-        intervals: [
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~25 min",
-        description: "(1' corsa / 2' camminata) × 7",
-        intervals: [
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 60, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      }
-    },
-    W2: {
-      A1: {
-        total: "~25 min",
-        description: "(90\" corsa / 2' camminata) × 6",
-        intervals: [
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~28 min",
-        description: "(90\" corsa / 2' camminata) × 7",
-        intervals: [
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 90, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      }
-    },
-    W3: {
-      A1: {
-        total: "~28 min",
-        description: "(2' corsa / 2' camminata) × 6",
-        intervals: [
-          { label: "Corsa", seconds: 120, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 120, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 120, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 120, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 120, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 120, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~30 min",
-        description: "(3' corsa / 2' camminata) × 5",
-        intervals: [
-          { label: "Corsa", seconds: 180, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 180, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 180, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 180, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 180, speed: 7.0, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      }
-    },
-    W4: {
-      A1: {
-        total: "~30 min",
-        description: "(4' corsa / 2' camminata) × 4",
-        intervals: [
-          { label: "Corsa", seconds: 240, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 240, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 240, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 240, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~32 min",
-        description: "(5' corsa / 2' camminata) × 4",
-        intervals: [
-          { label: "Corsa", seconds: 300, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 300, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 300, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 300, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      }
-    },
-    W5: {
-      A1: {
-        total: "~30 min",
-        description: "(6' corsa / 2' camminata) × 3",
-        intervals: [
-          { label: "Corsa", seconds: 360, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 360, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 360, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~32 min",
-        description: "(8' corsa / 2' camminata) × 3",
-        intervals: [
-          { label: "Corsa", seconds: 480, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 480, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 480, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 }
-        ]
-      }
-    },
-    W6: {
-      A1: {
-        total: "~28 min",
-        description: "(6' corsa 1% + 2' camminata 2%) × 3",
-        intervals: [
-          { label: "Corsa", seconds: 360, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 2 },
-          { label: "Corsa", seconds: 360, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 2 },
-          { label: "Corsa", seconds: 360, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 2 }
-        ]
-      },
-      A2: {
-        total: "~30 min",
-        description: "10' corsa + 2' camminata + 10' corsa",
-        intervals: [
-          { label: "Corsa", seconds: 600, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 600, speed: 7.5, incline: 1 }
-        ]
-      }
-    },
-    W7: {
-      A1: {
-        total: "~32 min",
-        description: "12' corsa + 2' camminata + 12' corsa",
-        intervals: [
-          { label: "Corsa", seconds: 720, speed: 7.5, incline: 1 },
-          { label: "Camminata", seconds: 120, speed: 5.0, incline: 1 },
-          { label: "Corsa", seconds: 720, speed: 7.5, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~30 min",
-        description: "20' corsa continua",
-        intervals: [
-          { label: "Corsa", seconds: 1200, speed: 7.5, incline: 1 }
-        ]
-      }
-    },
-    W8: {
-      A1: {
-        total: "~32 min",
-        description: "22' corsa continua",
-        intervals: [
-          { label: "Corsa", seconds: 1320, speed: 7.5, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~35 min",
-        description: "25' corsa continua",
-        intervals: [
-          { label: "Corsa", seconds: 1500, speed: 7.5, incline: 1 }
-        ]
-      }
-    },
-    W9: {
-      A1: {
-        total: "~35 min",
-        description: "28' corsa continua",
-        intervals: [
-          { label: "Corsa", seconds: 1680, speed: 7.5, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~26 min",
-        description: "fino a 4 km (corsa continua)",
-        intervals: [
-          { label: "Corsa", seconds: 1560, speed: 7.5, incline: 1 }
-        ]
-      }
-    },
-    W10: {
-      A1: {
-        total: "~30 min",
-        description: "fino a 4.5 km (corsa continua)",
-        intervals: [
-          { label: "Corsa", seconds: 1800, speed: 7.5, incline: 1 }
-        ]
-      },
-      A2: {
-        total: "~33 min",
-        description: "fino a 5 km (corsa continua)",
-        intervals: [
-          { label: "Corsa", seconds: 2000, speed: 7.5, incline: 1 }
-        ]
-      }
-    }
-  };
+  // Impostazioni standard
+  const WARMUP_MIN = 5;      // 5 minuti riscaldamento
+  const COOLDOWN_MIN = 5;    // 5 minuti defaticamento
+  const WARMUP_SPEED = 4.5;  // km/h
+  const WARMUP_INCL = 1;     // %
+  const COOLDOWN_SPEED = 4.0;
+  const COOLDOWN_INCL = 0.5;
+  const RUN_SPEED = 7.0;
+  const WALK_SPEED = 5.0;
+  const BASE_INCL = 1;       // pendenza base
 
-  let currentInterval = [];
+  // Definizione blocchi centrali per gli allenamenti.
+  // Esempio: Settimana 1
+  // W1A1: (1' Corsa + 2' Camminata) × 6
+  // W1A2: (1'30" Corsa + 2' Camminata) × 6 (esempio realistico di progressione)
+  function buildWorkout(week, session) {
+    const blocks = [];
+
+    // Aggiungi riscaldamento (uguale per tutti)
+    blocks.push({
+      label: "Riscaldamento",
+      seconds: WARMUP_MIN * 60,
+      speed: WARMUP_SPEED,
+      incline: WARMUP_INCL,
+      type: "warmup"
+    });
+
+    const key = week + session;
+
+    // WEEK 1
+    if (key === "W1A1") {
+      // (1' Corsa + 2' Camminata) × 6
+      for (let i = 0; i < 6; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+    } else if (key === "W1A2") {
+      // (1' Corsa + 2' Camminata) × 7
+      for (let i = 0; i < 7; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+
+    // WEEK 2
+    } else if (key === "W2A1") {
+      // (90" Corsa + 2' Camminata) × 6
+      for (let i = 0; i < 6; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 90, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+    } else if (key === "W2A2") {
+      // (90" Corsa + 2' Camminata) × 7
+      for (let i = 0; i < 7; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 90, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+
+    // WEEK 3
+    } else if (key === "W3A1") {
+      // (2' Corsa + 2' Camminata) × 6
+      for (let i = 0; i < 6; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 120, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+    } else if (key === "W3A2") {
+      // (3' Corsa + 2' Camminata) × 5
+      for (let i = 0; i < 5; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 180, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+
+    // WEEK 4
+    } else if (key === "W4A1") {
+      // (4' Corsa + 2' Camminata) × 4
+      for (let i = 0; i < 4; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 240, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+    } else if (key === "W4A2") {
+      // (5' Corsa + 2' Camminata) × 4
+      for (let i = 0; i < 4; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 300, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+
+    // WEEK 5
+    } else if (key === "W5A1") {
+      // (6' Corsa + 2' Camminata) × 3
+      for (let i = 0; i < 3; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 360, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+    } else if (key === "W5A2") {
+      // (8' Corsa + 2' Camminata) × 3
+      for (let i = 0; i < 3; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 480, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+
+    // WEEK 6
+    } else if (key === "W6A1") {
+      // 6' Corsa (1%) + 2' Camminata (2%) × 3
+      for (let i = 0; i < 3; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 360, speed: RUN_SPEED, incline: 1, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: 2, type: "walk" }
+        );
+      }
+    } else if (key === "W6A2") {
+      // 10' Corsa + 2' Camminata + 10' Corsa
+      blocks.push(
+        { label: "Corsa", seconds: 600, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+        { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" },
+        { label: "Corsa", seconds: 600, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
+      );
+
+    // WEEK 7
+    } else if (key === "W7A1") {
+      // 12' Corsa + 2' Camminata + 12' Corsa
+      blocks.push(
+        { label: "Corsa", seconds: 720, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+        { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" },
+        { label: "Corsa", seconds: 720, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
+      );
+    } else if (key === "W7A2") {
+      // 20' Corsa continua
+      blocks.push(
+        { label: "Corsa continua", seconds: 20 * 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
+      );
+
+    // WEEK 8
+    } else if (key === "W8A1") {
+      // 22' Corsa continua, pendenza leggermente più alta
+      blocks.push(
+        { label: "Corsa continua", seconds: 22 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+      );
+    } else if (key === "W8A2") {
+      // 25' Corsa continua, pendenza 1–2%
+      blocks.push(
+        { label: "Corsa continua", seconds: 25 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+      );
+
+    // WEEK 9
+    } else if (key === "W9A1") {
+      // 28' Corsa continua
+      blocks.push(
+        { label: "Corsa continua", seconds: 28 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+      );
+    } else if (key === "W9A2") {
+      // Corsa continua fino a 4 km.
+      // Approssimo con 32' a ritmo 7 km/h (~3.7 km) per restare comodi.
+      blocks.push(
+        { label: "Corsa verso 4 km", seconds: 32 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+      );
+
+    // WEEK 10
+    } else if (key === "W10A1") {
+      // Corsa continua fino a 4.5 km.
+      // Approssimo con 36' a 7 km/h (~4.2 km).
+      blocks.push(
+        { label: "Corsa verso 4.5 km", seconds: 36 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+      );
+    } else if (key === "W10A2") {
+      // Corsa continua verso 5 km.
+      // Approssimo con 40' a 7 km/h (~4.7 km), sufficiente per obiettivo 5K senza ansia di tempo.
+      blocks.push(
+        { label: "Corsa verso 5 km", seconds: 40 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+      );
+
+    } else {
+      // Fallback generico nel caso qualcosa non combaci
+      blocks.push({
+        label: "Corsa continua",
+        seconds: 20 * 60,
+        speed: RUN_SPEED,
+        incline: BASE_INCL,
+        type: "run"
+      });
+    }
+
+    // Aggiungi defaticamento (uguale per tutti)
+    blocks.push({
+      label: "Defaticamento",
+      seconds: COOLDOWN_MIN * 60,
+      speed: COOLDOWN_SPEED,
+      incline: COOLDOWN_INCL,
+      type: "cooldown"
+    });
+
+    return blocks;
+  }
+
+    const blocks = [];
+
+    // Aggiungi riscaldamento
+    blocks.push({
+      label: "Riscaldamento",
+      seconds: WARMUP_MIN * 60,
+      speed: WARMUP_SPEED,
+      incline: WARMUP_INCL,
+      type: "warmup"
+    });
+
+    // Blocchi centrali specifici per settimana/allenamento
+    const key = week + session;
+
+    if (key === "W1A1") {
+      for (let i = 0; i < 6; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+    } else if (key === "W1A2") {
+      for (let i = 0; i < 6; i++) {
+        blocks.push(
+          { label: "Corsa", seconds: 90, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+        );
+      }
+    } else {
+      // Placeholder per settimane successive:
+      // Metto un semplice 20' corsa continua come base (da adattare).
+      blocks.push({
+        label: "Corsa continua",
+        seconds: 20 * 60,
+        speed: RUN_SPEED,
+        incline: BASE_INCL,
+        type: "run"
+      });
+    }
+
+    // Aggiungi defaticamento
+    blocks.push({
+      label: "Defaticamento",
+      seconds: COOLDOWN_MIN * 60,
+      speed: COOLDOWN_SPEED,
+      incline: COOLDOWN_INCL,
+      type: "cooldown"
+    });
+
+    return blocks;
+  }
+
+  function describeBlockPattern(week, session) {
+    const key = week + session;
+    if (key === "W1A1") {
+      return "5' warmup · (1' corsa / 2' camminata) × 6 · 5' defaticamento";
+    } else if (key === "W1A2") {
+      return "5' warmup · (1'30\" corsa / 2' camminata) × 6 · 5' defaticamento";
+    } else {
+      return "5' warmup · corsa continua · 5' defaticamento";
+    }
+  }
+
+  // Stato timer
+  let currentWorkout = [];
   let currentIndex = 0;
   let remaining = 0;
   let timerId = null;
   let running = false;
   let started = false;
 
+  // Elementi DOM
   const phaseCard = document.getElementById('phaseCard');
   const phaseLabel = document.getElementById('phaseLabel');
   const timeEl = document.getElementById('time');
@@ -524,14 +537,15 @@
   const chipStep = document.getElementById('chipStep');
   const chipBlock = document.getElementById('chipBlock');
   const statusEl = document.getElementById('status');
-  const badgeEl = document.getElementById('badge');
   const totalTimeEl = document.getElementById('totalTime');
-  const weekSelect = document.getElementById('weekSelect');
-  const sessionSelect = document.getElementById('sessionSelect');
+  const badgeEl = document.getElementById('badge');
 
   const startBtn = document.getElementById('startBtn');
   const pauseBtn = document.getElementById('pauseBtn');
   const resetBtn = document.getElementById('resetBtn');
+
+  const weekSelect = document.getElementById('weekSelect');
+  const sessionSelect = document.getElementById('sessionSelect');
 
   function formatTime(sec) {
     const m = String(Math.floor(sec / 60)).padStart(2, '0');
@@ -539,86 +553,70 @@
     return m + ":" + s;
   }
 
-  function updateWorkout() {
-    const week = weekSelect.value;
-    const session = sessionSelect.value;
-    const workout = workoutData[week][session];
-
-    currentInterval = workout.intervals;
-    currentIndex = 0;
-    remaining = 0;
-    running = false;
-    started = false;
-
-    if (timerId !== null) {
-      clearInterval(timerId);
-      timerId = null;
-    }
-
-    const weekNum = week.replace('W', '');
-    const sessionNum = session.replace('A', '');
-    badgeEl.textContent = "Week " + weekNum + " · Run " + sessionNum;
-    totalTimeEl.textContent = "Totale: " + workout.total;
-    chipBlock.textContent = workout.description;
-
-    phaseCard.classList.remove('phase-running');
-    phaseCard.classList.add('phase-walk');
-    phaseLabel.textContent = "Premi START";
-    timeEl.textContent = "00:00";
-    detailsEl.textContent = "—";
-    subdetailsEl.textContent = "Prossimo: —";
-    chipStep.textContent = "Step 0 di 0";
-    statusEl.textContent = "Pronto";
-
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
-    resetBtn.disabled = true;
+  function computeTotalTime(blocks) {
+    const totalSec = blocks.reduce((sum, b) => sum + b.seconds, 0);
+    const min = Math.round(totalSec / 60);
+    return "~" + min + " min";
   }
 
   function updatePhaseCard() {
-    if (currentIndex >= currentInterval.length) {
-      phaseCard.classList.remove('phase-walk');
-      phaseCard.classList.add('phase-running');
+    if (!currentWorkout || currentWorkout.length === 0) {
+      phaseCard.className = "phase-card phase-warmup";
+      phaseLabel.textContent = "Seleziona e premi START";
+      timeEl.textContent = "00:00";
+      detailsEl.textContent = "—";
+      subdetailsEl.textContent = "Prossimo: —";
+      chipStep.textContent = "Step 0 di 0";
+      chipBlock.textContent = "—";
+      return;
+    }
+
+    if (currentIndex >= currentWorkout.length) {
+      phaseCard.className = "phase-card phase-running";
       phaseLabel.textContent = "Fatto!";
       timeEl.textContent = "00:00";
-      detailsEl.textContent = "Cammina defaticando 5–10 minuti";
-      subdetailsEl.textContent = "Hai completato questo allenamento";
-      chipStep.textContent = "Step " + currentInterval.length + " di " + currentInterval.length;
+      detailsEl.textContent = "Cammina defaticando se necessario";
+      subdetailsEl.textContent = "Allenamento completato";
+      chipStep.textContent = "Step " + currentWorkout.length + " di " + currentWorkout.length;
       statusEl.textContent = "Completato";
       return;
     }
 
-    const step = currentInterval[currentIndex];
-    const totalSteps = currentInterval.length;
+    const step = currentWorkout[currentIndex];
+    const totalSteps = currentWorkout.length;
     const stepNum = currentIndex + 1;
 
-    if (step.label === "Corsa") {
-      phaseCard.classList.remove('phase-walk');
-      phaseCard.classList.add('phase-running');
-    } else {
-      phaseCard.classList.remove('phase-running');
-      phaseCard.classList.add('phase-walk');
-    }
+    let cls = "phase-card ";
+    if (step.type === "run") cls += "phase-running";
+    else if (step.type === "walk") cls += "phase-walk";
+    else if (step.type === "warmup") cls += "phase-warmup";
+    else if (step.type === "cooldown") cls += "phase-cooldown";
+    phaseCard.className = cls;
 
     phaseLabel.textContent = step.label;
     timeEl.textContent = formatTime(remaining);
-    detailsEl.textContent = step.speed.toFixed(1) + " km/h · " + step.incline + "% pendenza";
+    detailsEl.textContent = step.speed.toFixed(1) + " km/h · " + step.incline + "%";
 
-    if (currentIndex + 1 < currentInterval.length) {
-      const next = currentInterval[currentIndex + 1];
+    if (currentIndex + 1 < currentWorkout.length) {
+      const next = currentWorkout[currentIndex + 1];
       subdetailsEl.textContent =
-        "Prossimo: " + next.label + " " +
+        "Prossimo: " +
+        next.label + " " +
         next.speed.toFixed(1) + " km/h · " + next.incline + "%";
     } else {
       subdetailsEl.textContent = "Prossimo: fine allenamento";
     }
 
     chipStep.textContent = "Step " + stepNum + " di " + totalSteps;
+
+    const w = weekSelect.value;
+    const s = sessionSelect.value;
+    chipBlock.textContent = describeBlockPattern(w, s);
   }
 
   function nextInterval() {
     currentIndex++;
-    if (currentIndex >= currentInterval.length) {
+    if (currentIndex >= currentWorkout.length) {
       clearInterval(timerId);
       timerId = null;
       running = false;
@@ -628,7 +626,7 @@
       updatePhaseCard();
       return;
     }
-    remaining = currentInterval[currentIndex].seconds;
+    remaining = currentWorkout[currentIndex].seconds;
     updatePhaseCard();
   }
 
@@ -642,11 +640,43 @@
     }
   }
 
+  function loadSelectedWorkout() {
+    const w = weekSelect.value;
+    const s = sessionSelect.value;
+    currentWorkout = buildWorkout(w, s);
+    const labelWeek = w.replace("W", "Week ");
+    const labelRun = s.replace("A", "Run ");
+    badgeEl.textContent = labelWeek + " · " + labelRun;
+    totalTimeEl.textContent = "Totale: " + computeTotalTime(currentWorkout);
+    chipBlock.textContent = describeBlockPattern(w, s);
+    currentIndex = 0;
+    remaining = 0;
+    started = false;
+    running = false;
+    if (timerId !== null) {
+      clearInterval(timerId);
+      timerId = null;
+    }
+    startBtn.disabled = false;
+    pauseBtn.disabled = true;
+    resetBtn.disabled = true;
+    statusEl.textContent = "Pronto";
+    updatePhaseCard();
+  }
+
+  // Eventi selettori
+  weekSelect.addEventListener("change", loadSelectedWorkout);
+  sessionSelect.addEventListener("change", loadSelectedWorkout);
+
+  // Pulsanti timer
   startBtn.onclick = function () {
     if (!started) {
+      if (!currentWorkout || currentWorkout.length === 0) {
+        loadSelectedWorkout();
+      }
       started = true;
       currentIndex = 0;
-      remaining = currentInterval[0].seconds;
+      remaining = currentWorkout[0].seconds;
       updatePhaseCard();
       timerId = setInterval(tick, 1000);
     }
@@ -665,10 +695,20 @@
   };
 
   resetBtn.onclick = function () {
-    updateWorkout();
+    running = false;
+    started = false;
+    if (timerId !== null) {
+      clearInterval(timerId);
+      timerId = null;
+    }
+    currentIndex = 0;
+    remaining = 0;
+    statusEl.textContent = "Pronto";
+    loadSelectedWorkout();
   };
 
-  updateWorkout();
+  // Inizializza con Week 1 Run 1
+  loadSelectedWorkout();
 </script>
 
 </body>
