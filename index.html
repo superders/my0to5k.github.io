@@ -757,12 +757,16 @@
         pauseBtn.disabled = true;
         resetBtn.disabled = false;
 
-        // Segna l'allenamento come completato
+        // Segna completato
         markCurrentWorkoutDone();
+
+        // Rilascia il wake lock a fine allenamento
+        releaseWakeLock();
 
         updatePhaseCard();
         return;
       }
+
 
       remaining = currentWorkout[currentIndex].seconds;
       updatePhaseCard();
@@ -818,7 +822,7 @@
 
 
     // Pulsanti timer
-    startBtn.onclick = function () {
+    startBtn.onclick = async function () {
       if (!started) {
         if (!currentWorkout || currentWorkout.length === 0) {
           loadSelectedWorkout();
@@ -834,16 +838,22 @@
       pauseBtn.disabled = false;
       resetBtn.disabled = false;
       statusEl.textContent = "In corso";
+
+      // Mantieni lo schermo acceso mentre il timer è in esecuzione
+      await requestWakeLock();
     };
 
-    pauseBtn.onclick = function () {
+    pauseBtn.onclick = async function () {
       running = false;
       startBtn.disabled = false;
       pauseBtn.disabled = true;
       statusEl.textContent = "In pausa";
+
+      // Rilascia il wake lock quando metti in pausa
+      await releaseWakeLock();
     };
 
-    resetBtn.onclick = function () {
+    resetBtn.onclick = async function () {
       running = false;
       started = false;
       if (timerId !== null) {
@@ -853,8 +863,13 @@
       currentIndex = 0;
       remaining = 0;
       statusEl.textContent = "Pronto";
+
+      // Rilascia il wake lock quando resetti
+      await releaseWakeLock();
+
       loadSelectedWorkout();
     };
+
 
     // Carica ultima scelta salvata (se presente)
     const savedWeek = localStorage.getItem("tapis_week");
@@ -905,6 +920,31 @@
         } else {
           opt.textContent = baseLabel;
         }
+      }
+    }
+
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+      if (!('wakeLock' in navigator)) return;
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => {
+          console.log('Wake lock rilasciato');
+        });
+      } catch (err) {
+        console.error('Wake lock error:', err.name, err.message);
+      }
+    }
+
+    async function releaseWakeLock() {
+      if (wakeLock) {
+        try {
+          await wakeLock.release();
+        } catch (e) {
+          console.error(e);
+        }
+        wakeLock = null;
       }
     }
 
