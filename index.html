@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8" />
   <title>Timer Tapis Roulant 0–5K</title>
@@ -11,16 +11,20 @@
     :root {
       --bg: #050816;
       --card: #0b1020;
-      --running-grad: linear-gradient(135deg, #22c55e, #14b8a6);
-      --walk-grad: linear-gradient(135deg, #f97316, #ec4899);
-      --warmup-grad: linear-gradient(135deg, #eab308, #f97316);
+      --warmup-grad: linear-gradient(135deg, #22c55e, #14b8a6);
+      --running-grad: linear-gradient(135deg, #f97316, #ec4899);
+      --walk-grad: linear-gradient(135deg, #eab308, #f97316);
       --cooldown-grad: linear-gradient(135deg, #3b82f6, #22c55e);
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
       --accent: #38bdf8;
       --danger: #ef4444;
     }
-    * { box-sizing: border-box; }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -32,6 +36,7 @@
       align-items: center;
       padding: 16px;
     }
+
     .app {
       width: 100%;
       max-width: 420px;
@@ -41,17 +46,20 @@
       padding: 16px 18px 20px;
       border: 1px solid rgba(148, 163, 184, 0.25);
     }
+
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
     }
+
     .title {
       font-size: 18px;
       font-weight: 700;
       letter-spacing: 0.03em;
     }
+
     .badge {
       font-size: 11px;
       padding: 4px 8px;
@@ -60,11 +68,13 @@
       color: var(--text-muted);
       text-transform: uppercase;
     }
+
     .selectors {
       display: flex;
       gap: 8px;
       margin-bottom: 10px;
     }
+
     select {
       flex: 1;
       padding: 6px 8px;
@@ -74,10 +84,12 @@
       color: var(--text-main);
       font-size: 13px;
     }
+
     select:focus {
       outline: none;
       border-color: var(--accent);
     }
+
     .phase-card {
       border-radius: 18px;
       padding: 16px 14px;
@@ -85,36 +97,54 @@
       position: relative;
       overflow: hidden;
     }
-    .phase-running { background-image: var(--running-grad); }
-    .phase-walk { background-image: var(--walk-grad); }
-    .phase-warmup { background-image: var(--warmup-grad); }
-    .phase-cooldown { background-image: var(--cooldown-grad); }
+
+    .phase-running {
+      background-image: var(--running-grad);
+    }
+
+    .phase-walk {
+      background-image: var(--walk-grad);
+    }
+
+    .phase-warmup {
+      background-image: var(--warmup-grad);
+    }
+
+    .phase-cooldown {
+      background-image: var(--cooldown-grad);
+    }
+
     .phase-label {
       font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       opacity: 0.9;
     }
+
     .time {
       font-size: 52px;
       font-weight: 700;
       margin: 6px 0 4px;
     }
+
     .details {
       font-size: 14px;
       opacity: 0.95;
     }
+
     .subdetails {
       font-size: 12px;
       opacity: 0.85;
       margin-top: 4px;
     }
+
     .chips {
       display: flex;
       gap: 6px;
       margin-top: 8px;
       flex-wrap: wrap;
     }
+
     .chip {
       font-size: 11px;
       padding: 3px 8px;
@@ -125,6 +155,7 @@
       align-items: center;
       gap: 4px;
     }
+
     .chip-dot {
       width: 6px;
       height: 6px;
@@ -132,6 +163,7 @@
       background: var(--text-main);
       opacity: 0.9;
     }
+
     .info-row {
       display: flex;
       justify-content: space-between;
@@ -139,11 +171,13 @@
       color: var(--text-muted);
       margin-bottom: 12px;
     }
+
     .buttons {
       display: flex;
       gap: 8px;
       margin-bottom: 4px;
     }
+
     button {
       flex: 1;
       border-radius: 999px;
@@ -154,30 +188,36 @@
       cursor: pointer;
       transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.2s;
     }
+
     button:active {
       transform: translateY(1px) scale(0.98);
       box-shadow: none;
     }
+
     button:disabled {
       opacity: 0.4;
       cursor: default;
       transform: none;
     }
+
     .btn-primary {
       background: var(--accent);
       color: #020617;
       box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
     }
+
     .btn-secondary {
       background: rgba(15, 23, 42, 1);
       color: var(--text-main);
       border: 1px solid rgba(148, 163, 184, 0.4);
     }
+
     .btn-danger {
       background: rgba(239, 68, 68, 0.1);
       color: var(--danger);
       border: 1px solid rgba(248, 113, 113, 0.6);
     }
+
     .hint {
       font-size: 11px;
       color: var(--text-muted);
@@ -186,516 +226,693 @@
     }
   </style>
 </head>
+
 <body>
 
-<div class="app">
-  <header>
-    <div class="title">0–5K Tapis Timer</div>
-    <div id="badge" class="badge">Week 1 · Run 1</div>
-  </header>
+  <div class="app">
+    <header>
+      <div class="title">0–5K Tapis Timer</div>
+      <div id="badge" class="badge">Week 1 · Run 1</div>
+    </header>
 
-  <div class="selectors">
-    <select id="weekSelect">
-      <option value="W1">Settimana 1</option>
-      <option value="W2">Settimana 2</option>
-      <option value="W3">Settimana 3</option>
-      <option value="W4">Settimana 4</option>
-      <option value="W5">Settimana 5</option>
-      <option value="W6">Settimana 6</option>
-      <option value="W7">Settimana 7</option>
-      <option value="W8">Settimana 8</option>
-      <option value="W9">Settimana 9</option>
-      <option value="W10">Settimana 10</option>
-    </select>
-    <select id="sessionSelect">
-      <option value="A1">Allenamento 1</option>
-      <option value="A2">Allenamento 2</option>
-    </select>
-  </div>
+    <div class="selectors">
+      <select id="weekSelect">
+        <option value="W1">Settimana 1</option>
+        <option value="W2">Settimana 2</option>
+        <option value="W3">Settimana 3</option>
+        <option value="W4">Settimana 4</option>
+        <option value="W5">Settimana 5</option>
+        <option value="W6">Settimana 6</option>
+        <option value="W7">Settimana 7</option>
+        <option value="W8">Settimana 8</option>
+        <option value="W9">Settimana 9</option>
+        <option value="W10">Settimana 10</option>
+      </select>
+      <select id="sessionSelect">
+        <option value="A1">Allenamento 1</option>
+        <option value="A2">Allenamento 2</option>
+        <option value="A3">Allenamento 3 (opzionale)</option>
+      </select>
 
-  <div id="phaseCard" class="phase-card phase-warmup">
-    <div id="phaseLabel" class="phase-label">Seleziona e premi START</div>
-    <div id="time" class="time">00:00</div>
-    <div id="details" class="details">—</div>
-    <div id="subdetails" class="subdetails">Prossimo: —</div>
-    <div class="chips">
-      <div class="chip">
-        <span class="chip-dot"></span>
-        <span id="chipStep">Step 0 di 0</span>
+    </div>
+
+    <div id="phaseCard" class="phase-card phase-warmup">
+      <div id="phaseLabel" class="phase-label">Seleziona e premi START</div>
+      <div id="time" class="time">00:00</div>
+      <div id="details" class="details">—</div>
+      <div id="subdetails" class="subdetails">Prossimo: —</div>
+      <div class="chips">
+        <div class="chip">
+          <span class="chip-dot"></span>
+          <span id="chipStep">Step 0 di 0</span>
+        </div>
+        <div class="chip">
+          <span class="chip-dot"></span>
+          <span id="chipBlock">—</span>
+        </div>
       </div>
-      <div class="chip">
-        <span class="chip-dot"></span>
-        <span id="chipBlock">—</span>
-      </div>
+    </div>
+
+    <div class="info-row">
+      <div id="totalTime">Totale: —</div>
+      <div id="status">Pronto</div>
+    </div>
+
+    <div class="buttons">
+      <button id="startBtn" class="btn-primary">Start</button>
+      <button id="pauseBtn" class="btn-secondary" disabled>Pausa</button>
+      <button id="resetBtn" class="btn-danger" disabled>Reset</button>
+    </div>
+    <div class="hint">
+      Riscaldamento 5' e defaticamento 5' sono inclusi nel timer.
     </div>
   </div>
 
-  <div class="info-row">
-    <div id="totalTime">Totale: —</div>
-    <div id="status">Pronto</div>
-  </div>
+  <script>
+    // Impostazioni standard
+    const WARMUP_MIN = 5;      // 5 minuti riscaldamento
+    const COOLDOWN_MIN = 5;    // 5 minuti defaticamento
+    const WARMUP_SPEED = 4.5;  // km/h
+    const WARMUP_INCL = 1;     // %
+    const COOLDOWN_SPEED = 4.0;
+    const COOLDOWN_INCL = 0.5;
+    const RUN_SPEED = 7.0;
+    const WALK_SPEED = 5.0;
+    const BASE_INCL = 1;       // pendenza base
 
-  <div class="buttons">
-    <button id="startBtn" class="btn-primary">Start</button>
-    <button id="pauseBtn" class="btn-secondary" disabled>Pausa</button>
-    <button id="resetBtn" class="btn-danger" disabled>Reset</button>
-  </div>
-  <div class="hint">
-    Riscaldamento 5' e defaticamento 5' sono inclusi nel timer.
-  </div>
-</div>
+    // Definizione blocchi centrali per gli allenamenti.
+    // Esempio: Settimana 1
+    // W1A1: (1' Corsa + 2' Camminata) × 6
+    // W1A2: (1'30" Corsa + 2' Camminata) × 6 (esempio realistico di progressione)
+    function buildWorkout(week, session) {
+      const blocks = [];
 
-<script>
-  // Impostazioni standard
-  const WARMUP_MIN = 5;      // 5 minuti riscaldamento
-  const COOLDOWN_MIN = 5;    // 5 minuti defaticamento
-  const WARMUP_SPEED = 4.5;  // km/h
-  const WARMUP_INCL = 1;     // %
-  const COOLDOWN_SPEED = 4.0;
-  const COOLDOWN_INCL = 0.5;
-  const RUN_SPEED = 7.0;
-  const WALK_SPEED = 5.0;
-  const BASE_INCL = 1;       // pendenza base
+      // Aggiungi riscaldamento (uguale per tutti)
+      blocks.push({
+        label: "Riscaldamento",
+        seconds: WARMUP_MIN * 60,
+        speed: WARMUP_SPEED,
+        incline: WARMUP_INCL,
+        type: "warmup"
+      });
 
-  // Definizione blocchi centrali per gli allenamenti.
-  // Esempio: Settimana 1
-  // W1A1: (1' Corsa + 2' Camminata) × 6
-  // W1A2: (1'30" Corsa + 2' Camminata) × 6 (esempio realistico di progressione)
-  function buildWorkout(week, session) {
-    const blocks = [];
+      const key = week + session;
 
-    // Aggiungi riscaldamento (uguale per tutti)
-    blocks.push({
-      label: "Riscaldamento",
-      seconds: WARMUP_MIN * 60,
-      speed: WARMUP_SPEED,
-      incline: WARMUP_INCL,
-      type: "warmup"
-    });
+      // WEEK 1
+      if (key === "W1A1") {
+        // (1' Corsa + 2' Camminata) × 6
+        for (let i = 0; i < 6; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W1A2") {
+        // (1' Corsa + 2' Camminata) × 7
+        for (let i = 0; i < 7; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W1A3") {
+        // Opzionale: (1' Corsa + 2' Camminata) × 4
+        for (let i = 0; i < 4; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
 
-    const key = week + session;
+        // WEEK 2
+      } else if (key === "W2A1") {
+        // (90" Corsa + 2' Camminata) × 6
+        for (let i = 0; i < 6; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 90, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W2A2") {
+        // (90" Corsa + 2' Camminata) × 7
+        for (let i = 0; i < 7; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 90, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W2A3") {
+        // Opzionale: (90" Corsa + 2' Camminata) × 4
+        for (let i = 0; i < 4; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 90, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
 
-    // WEEK 1
-    if (key === "W1A1") {
-      // (1' Corsa + 2' Camminata) × 6
-      for (let i = 0; i < 6; i++) {
+        // WEEK 3
+      } else if (key === "W3A1") {
+        // (2' Corsa + 2' Camminata) × 6
+        for (let i = 0; i < 6; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 120, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W3A2") {
+        // (3' Corsa + 2' Camminata) × 5
+        for (let i = 0; i < 5; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 180, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W3A3") {
+        // Opzionale: (2' Corsa + 2' Camminata) × 4
+        for (let i = 0; i < 4; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 120, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+
+        // WEEK 4
+      } else if (key === "W4A1") {
+        // (4' Corsa + 2' Camminata) × 4
+        for (let i = 0; i < 4; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 240, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W4A2") {
+        // (5' Corsa + 2' Camminata) × 4
+        for (let i = 0; i < 4; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 300, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W4A3") {
+        // Opzionale: (3' Corsa + 2' Camminata) × 3
+        for (let i = 0; i < 3; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 180, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+
+        // WEEK 5
+      } else if (key === "W5A1") {
+        // (6' Corsa + 2' Camminata) × 3
+        for (let i = 0; i < 3; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 360, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W5A2") {
+        // (8' Corsa + 2' Camminata) × 3
+        for (let i = 0; i < 3; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 480, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+      } else if (key === "W5A3") {
+        // Opzionale: (5' Corsa + 2' Camminata) × 3
+        for (let i = 0; i < 3; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 300, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          );
+        }
+
+        // WEEK 6
+      } else if (key === "W6A1") {
+        // 6' Corsa (1%) + 2' Camminata (2%) × 3
+        for (let i = 0; i < 3; i++) {
+          blocks.push(
+            { label: "Corsa", seconds: 360, speed: RUN_SPEED, incline: 1, type: "run" },
+            { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: 2, type: "walk" }
+          );
+        }
+      } else if (key === "W6A2") {
+        // 10' Corsa + 2' Camminata + 10' Corsa
         blocks.push(
-          { label: "Corsa", seconds: 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          { label: "Corsa", seconds: 600, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" },
+          { label: "Corsa", seconds: 600, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
         );
-      }
-    } else if (key === "W1A2") {
-      // (1' Corsa + 2' Camminata) × 7
-      for (let i = 0; i < 7; i++) {
-        blocks.push(
-          { label: "Corsa", seconds: 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
-        );
-      }
-
-    // WEEK 2
-    } else if (key === "W2A1") {
-      // (90" Corsa + 2' Camminata) × 6
-      for (let i = 0; i < 6; i++) {
-        blocks.push(
-          { label: "Corsa", seconds: 90, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
-        );
-      }
-    } else if (key === "W2A2") {
-      // (90" Corsa + 2' Camminata) × 7
-      for (let i = 0; i < 7; i++) {
-        blocks.push(
-          { label: "Corsa", seconds: 90, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
-        );
-      }
-
-    // WEEK 3
-    } else if (key === "W3A1") {
-      // (2' Corsa + 2' Camminata) × 6
-      for (let i = 0; i < 6; i++) {
-        blocks.push(
-          { label: "Corsa", seconds: 120, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
-        );
-      }
-    } else if (key === "W3A2") {
-      // (3' Corsa + 2' Camminata) × 5
-      for (let i = 0; i < 5; i++) {
-        blocks.push(
-          { label: "Corsa", seconds: 180, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
-        );
-      }
-
-    // WEEK 4
-    } else if (key === "W4A1") {
-      // (4' Corsa + 2' Camminata) × 4
-      for (let i = 0; i < 4; i++) {
-        blocks.push(
-          { label: "Corsa", seconds: 240, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
-        );
-      }
-    } else if (key === "W4A2") {
-      // (5' Corsa + 2' Camminata) × 4
-      for (let i = 0; i < 4; i++) {
-        blocks.push(
-          { label: "Corsa", seconds: 300, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
-        );
-      }
-
-    // WEEK 5
-    } else if (key === "W5A1") {
-      // (6' Corsa + 2' Camminata) × 3
-      for (let i = 0; i < 3; i++) {
-        blocks.push(
-          { label: "Corsa", seconds: 360, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
-        );
-      }
-    } else if (key === "W5A2") {
-      // (8' Corsa + 2' Camminata) × 3
-      for (let i = 0; i < 3; i++) {
+      } else if (key === "W6A3") {
+        // Opzionale: 8' Corsa + 2' Camminata + 8' Corsa
         blocks.push(
           { label: "Corsa", seconds: 480, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" }
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" },
+          { label: "Corsa", seconds: 480, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
         );
-      }
 
-    // WEEK 6
-    } else if (key === "W6A1") {
-      // 6' Corsa (1%) + 2' Camminata (2%) × 3
-      for (let i = 0; i < 3; i++) {
+        // WEEK 7
+      } else if (key === "W7A1") {
+        // 12' Corsa + 2' Camminata + 12' Corsa
         blocks.push(
-          { label: "Corsa", seconds: 360, speed: RUN_SPEED, incline: 1, type: "run" },
-          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: 2, type: "walk" }
+          { label: "Corsa", seconds: 720, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
+          { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" },
+          { label: "Corsa", seconds: 720, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
         );
+      } else if (key === "W7A2") {
+        // 20' Corsa continua
+        blocks.push(
+          { label: "Corsa continua", seconds: 20 * 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
+        );
+      } else if (key === "W7A3") {
+        // Opzionale: 15' Corsa continua
+        blocks.push(
+          { label: "Corsa continua", seconds: 15 * 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
+        );
+
+        // WEEK 8
+      } else if (key === "W8A1") {
+        // 22' Corsa continua, pendenza 1.5%
+        blocks.push(
+          { label: "Corsa continua", seconds: 22 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+      } else if (key === "W8A2") {
+        // 25' Corsa continua
+        blocks.push(
+          { label: "Corsa continua", seconds: 25 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+      } else if (key === "W8A3") {
+        // Opzionale: 18' Corsa continua
+        blocks.push(
+          { label: "Corsa continua", seconds: 18 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+
+        // WEEK 9
+      } else if (key === "W9A1") {
+        // 28' Corsa continua
+        blocks.push(
+          { label: "Corsa continua", seconds: 28 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+      } else if (key === "W9A2") {
+        // Corsa verso 4 km (~32')
+        blocks.push(
+          { label: "Corsa verso 4 km", seconds: 32 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+      } else if (key === "W9A3") {
+        // Opzionale: 22' Corsa continua
+        blocks.push(
+          { label: "Corsa continua", seconds: 22 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+
+        // WEEK 10
+      } else if (key === "W10A1") {
+        // Corsa verso 4.5 km (~36')
+        blocks.push(
+          { label: "Corsa verso 4.5 km", seconds: 36 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+      } else if (key === "W10A2") {
+        // Corsa verso 5 km (~40')
+        blocks.push(
+          { label: "Corsa verso 5 km", seconds: 40 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+      } else if (key === "W10A3") {
+        // Opzionale: 25' Corsa continua
+        blocks.push(
+          { label: "Corsa continua", seconds: 25 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
+        );
+
+      } else {
+        // Fallback generico
+        blocks.push({
+          label: "Corsa continua",
+          seconds: 20 * 60,
+          speed: RUN_SPEED,
+          incline: BASE_INCL,
+          type: "run"
+        });
       }
-    } else if (key === "W6A2") {
-      // 10' Corsa + 2' Camminata + 10' Corsa
-      blocks.push(
-        { label: "Corsa", seconds: 600, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-        { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" },
-        { label: "Corsa", seconds: 600, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
-      );
 
-    // WEEK 7
-    } else if (key === "W7A1") {
-      // 12' Corsa + 2' Camminata + 12' Corsa
-      blocks.push(
-        { label: "Corsa", seconds: 720, speed: RUN_SPEED, incline: BASE_INCL, type: "run" },
-        { label: "Camminata", seconds: 120, speed: WALK_SPEED, incline: BASE_INCL, type: "walk" },
-        { label: "Corsa", seconds: 720, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
-      );
-    } else if (key === "W7A2") {
-      // 20' Corsa continua
-      blocks.push(
-        { label: "Corsa continua", seconds: 20 * 60, speed: RUN_SPEED, incline: BASE_INCL, type: "run" }
-      );
-
-    // WEEK 8
-    } else if (key === "W8A1") {
-      // 22' Corsa continua, pendenza leggermente più alta
-      blocks.push(
-        { label: "Corsa continua", seconds: 22 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
-      );
-    } else if (key === "W8A2") {
-      // 25' Corsa continua, pendenza 1–2%
-      blocks.push(
-        { label: "Corsa continua", seconds: 25 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
-      );
-
-    // WEEK 9
-    } else if (key === "W9A1") {
-      // 28' Corsa continua
-      blocks.push(
-        { label: "Corsa continua", seconds: 28 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
-      );
-    } else if (key === "W9A2") {
-      // Corsa continua fino a 4 km.
-      // Approssimo con 32' a ritmo 7 km/h (~3.7 km) per restare comodi.
-      blocks.push(
-        { label: "Corsa verso 4 km", seconds: 32 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
-      );
-
-    // WEEK 10
-    } else if (key === "W10A1") {
-      // Corsa continua fino a 4.5 km.
-      // Approssimo con 36' a 7 km/h (~4.2 km).
-      blocks.push(
-        { label: "Corsa verso 4.5 km", seconds: 36 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
-      );
-    } else if (key === "W10A2") {
-      // Corsa continua verso 5 km.
-      // Approssimo con 40' a 7 km/h (~4.7 km), sufficiente per obiettivo 5K senza ansia di tempo.
-      blocks.push(
-        { label: "Corsa verso 5 km", seconds: 40 * 60, speed: RUN_SPEED, incline: 1.5, type: "run" }
-      );
-
-    } else {
-      // Fallback generico nel caso qualcosa non combaci
+      // Defaticamento
       blocks.push({
-        label: "Corsa continua",
-        seconds: 20 * 60,
-        speed: RUN_SPEED,
-        incline: BASE_INCL,
-        type: "run"
+        label: "Defaticamento",
+        seconds: COOLDOWN_MIN * 60,
+        speed: COOLDOWN_SPEED,
+        incline: COOLDOWN_INCL,
+        type: "cooldown"
       });
+
+      return blocks;
     }
-
-    // Aggiungi defaticamento (uguale per tutti)
-    blocks.push({
-      label: "Defaticamento",
-      seconds: COOLDOWN_MIN * 60,
-      speed: COOLDOWN_SPEED,
-      incline: COOLDOWN_INCL,
-      type: "cooldown"
-    });
-
-    return blocks;
-  }
 
     function describeBlockPattern(week, session) {
-    const key = week + session;
-    if (key === "W1A1") {
-      return "5' warmup · (1' corsa / 2' camminata) × 6 · 5' defaticamento";
-    } else if (key === "W1A2") {
-      return "5' warmup · (1' corsa / 2' camminata) × 7 · 5' defaticamento";
-    } else if (key === "W2A1") {
-      return "5' warmup · (1'30\" corsa / 2' camminata) × 6 · 5' defaticamento";
-    } else if (key === "W2A2") {
-      return "5' warmup · (1'30\" corsa / 2' camminata) × 7 · 5' defaticamento";
-    } else if (key === "W3A1") {
-      return "5' warmup · (2' corsa / 2' camminata) × 6 · 5' defaticamento";
-    } else if (key === "W3A2") {
-      return "5' warmup · (3' corsa / 2' camminata) × 5 · 5' defaticamento";
-    } else if (key === "W4A1") {
-      return "5' warmup · (4' corsa / 2' camminata) × 4 · 5' defaticamento";
-    } else if (key === "W4A2") {
-      return "5' warmup · (5' corsa / 2' camminata) × 4 · 5' defaticamento";
-    } else if (key === "W5A1") {
-      return "5' warmup · (6' corsa / 2' camminata) × 3 · 5' defaticamento";
-    } else if (key === "W5A2") {
-      return "5' warmup · (8' corsa / 2' camminata) × 3 · 5' defaticamento";
-    } else if (key === "W6A1") {
-      return "5' warmup · [6' corsa / 2' camminata] × 3 · 5' defaticamento";
-    } else if (key === "W6A2") {
-      return "5' warmup · 10' corsa + 2' camminata + 10' corsa · 5' defaticamento";
-    } else if (key === "W7A1") {
-      return "5' warmup · 12' corsa + 2' camminata + 12' corsa · 5' defaticamento";
-    } else if (key === "W7A2") {
-      return "5' warmup · 20' corsa continua · 5' defaticamento";
-    } else if (key === "W8A1") {
-      return "5' warmup · 22' corsa continua · 5' defaticamento";
-    } else if (key === "W8A2") {
-      return "5' warmup · 25' corsa continua · 5' defaticamento";
-    } else if (key === "W9A1") {
-      return "5' warmup · 28' corsa continua · 5' defaticamento";
-    } else if (key === "W9A2") {
-      return "5' warmup · corsa verso 4 km · 5' defaticamento";
-    } else if (key === "W10A1") {
-      return "5' warmup · corsa verso 4.5 km · 5' defaticamento";
-    } else if (key === "W10A2") {
-      return "5' warmup · corsa verso 5 km · 5' defaticamento";
-    } else {
-      return "5' warmup · corsa continua · 5' defaticamento";
-    }
-  }
+      const key = week + session;
 
+      // Week 1
+      if (key === "W1A1") {
+        return "5' warmup · (1' corsa / 2' camminata) × 6 · 5' defaticamento";
+      } else if (key === "W1A2") {
+        return "5' warmup · (1' corsa / 2' camminata) × 7 · 5' defaticamento";
+      } else if (key === "W1A3") {
+        return "5' warmup · (1' corsa / 2' camminata) × 4 · 5' defaticamento";
 
-  // Stato timer
-  let currentWorkout = [];
-  let currentIndex = 0;
-  let remaining = 0;
-  let timerId = null;
-  let running = false;
-  let started = false;
+        // Week 2
+      } else if (key === "W2A1") {
+        return "5' warmup · (1'30\" corsa / 2' camminata) × 6 · 5' defaticamento";
+      } else if (key === "W2A2") {
+        return "5' warmup · (1'30\" corsa / 2' camminata) × 7 · 5' defaticamento";
+      } else if (key === "W2A3") {
+        return "5' warmup · (1'30\" corsa / 2' camminata) × 4 · 5' defaticamento";
 
-  // Elementi DOM
-  const phaseCard = document.getElementById('phaseCard');
-  const phaseLabel = document.getElementById('phaseLabel');
-  const timeEl = document.getElementById('time');
-  const detailsEl = document.getElementById('details');
-  const subdetailsEl = document.getElementById('subdetails');
-  const chipStep = document.getElementById('chipStep');
-  const chipBlock = document.getElementById('chipBlock');
-  const statusEl = document.getElementById('status');
-  const totalTimeEl = document.getElementById('totalTime');
-  const badgeEl = document.getElementById('badge');
+        // Week 3
+      } else if (key === "W3A1") {
+        return "5' warmup · (2' corsa / 2' camminata) × 6 · 5' defaticamento";
+      } else if (key === "W3A2") {
+        return "5' warmup · (3' corsa / 2' camminata) × 5 · 5' defaticamento";
+      } else if (key === "W3A3") {
+        return "5' warmup · (2' corsa / 2' camminata) × 4 · 5' defaticamento";
 
-  const startBtn = document.getElementById('startBtn');
-  const pauseBtn = document.getElementById('pauseBtn');
-  const resetBtn = document.getElementById('resetBtn');
+        // Week 4
+      } else if (key === "W4A1") {
+        return "5' warmup · (4' corsa / 2' camminata) × 4 · 5' defaticamento";
+      } else if (key === "W4A2") {
+        return "5' warmup · (5' corsa / 2' camminata) × 4 · 5' defaticamento";
+      } else if (key === "W4A3") {
+        return "5' warmup · (3' corsa / 2' camminata) × 3 · 5' defaticamento";
 
-  const weekSelect = document.getElementById('weekSelect');
-  const sessionSelect = document.getElementById('sessionSelect');
+        // Week 5
+      } else if (key === "W5A1") {
+        return "5' warmup · (6' corsa / 2' camminata) × 3 · 5' defaticamento";
+      } else if (key === "W5A2") {
+        return "5' warmup · (8' corsa / 2' camminata) × 3 · 5' defaticamento";
+      } else if (key === "W5A3") {
+        return "5' warmup · (5' corsa / 2' camminata) × 3 · 5' defaticamento";
 
-  function formatTime(sec) {
-    const m = String(Math.floor(sec / 60)).padStart(2, '0');
-    const s = String(sec % 60).padStart(2, '0');
-    return m + ":" + s;
-  }
+        // Week 6
+      } else if (key === "W6A1") {
+        return "5' warmup · [6' corsa / 2' camminata] × 3 · 5' defaticamento";
+      } else if (key === "W6A2") {
+        return "5' warmup · 10' corsa + 2' camminata + 10' corsa · 5' defaticamento";
+      } else if (key === "W6A3") {
+        return "5' warmup · 8' corsa + 2' camminata + 8' corsa · 5' defaticamento";
 
-  function computeTotalTime(blocks) {
-    const totalSec = blocks.reduce((sum, b) => sum + b.seconds, 0);
-    const min = Math.round(totalSec / 60);
-    return "~" + min + " min";
-  }
+        // Week 7
+      } else if (key === "W7A1") {
+        return "5' warmup · 12' corsa + 2' camminata + 12' corsa · 5' defaticamento";
+      } else if (key === "W7A2") {
+        return "5' warmup · 20' corsa continua · 5' defaticamento";
+      } else if (key === "W7A3") {
+        return "5' warmup · 15' corsa continua · 5' defaticamento";
 
-  function updatePhaseCard() {
-    if (!currentWorkout || currentWorkout.length === 0) {
-      phaseCard.className = "phase-card phase-warmup";
-      phaseLabel.textContent = "Seleziona e premi START";
-      timeEl.textContent = "00:00";
-      detailsEl.textContent = "—";
-      subdetailsEl.textContent = "Prossimo: —";
-      chipStep.textContent = "Step 0 di 0";
-      chipBlock.textContent = "—";
-      return;
-    }
+        // Week 8
+      } else if (key === "W8A1") {
+        return "5' warmup · 22' corsa continua · 5' defaticamento";
+      } else if (key === "W8A2") {
+        return "5' warmup · 25' corsa continua · 5' defaticamento";
+      } else if (key === "W8A3") {
+        return "5' warmup · 18' corsa continua · 5' defaticamento";
 
-    if (currentIndex >= currentWorkout.length) {
-      phaseCard.className = "phase-card phase-running";
-      phaseLabel.textContent = "Fatto!";
-      timeEl.textContent = "00:00";
-      detailsEl.textContent = "Cammina defaticando se necessario";
-      subdetailsEl.textContent = "Allenamento completato";
-      chipStep.textContent = "Step " + currentWorkout.length + " di " + currentWorkout.length;
-      statusEl.textContent = "Completato";
-      return;
-    }
+        // Week 9
+      } else if (key === "W9A1") {
+        return "5' warmup · 28' corsa continua · 5' defaticamento";
+      } else if (key === "W9A2") {
+        return "5' warmup · corsa verso 4 km · 5' defaticamento";
+      } else if (key === "W9A3") {
+        return "5' warmup · 22' corsa continua · 5' defaticamento";
 
-    const step = currentWorkout[currentIndex];
-    const totalSteps = currentWorkout.length;
-    const stepNum = currentIndex + 1;
+        // Week 10
+      } else if (key === "W10A1") {
+        return "5' warmup · corsa verso 4.5 km · 5' defaticamento";
+      } else if (key === "W10A2") {
+        return "5' warmup · corsa verso 5 km · 5' defaticamento";
+      } else if (key === "W10A3") {
+        return "5' warmup · 25' corsa continua · 5' defaticamento";
 
-    let cls = "phase-card ";
-    if (step.type === "run") cls += "phase-running";
-    else if (step.type === "walk") cls += "phase-walk";
-    else if (step.type === "warmup") cls += "phase-warmup";
-    else if (step.type === "cooldown") cls += "phase-cooldown";
-    phaseCard.className = cls;
-
-    phaseLabel.textContent = step.label;
-    timeEl.textContent = formatTime(remaining);
-    detailsEl.textContent = step.speed.toFixed(1) + " km/h · " + step.incline + "%";
-
-    if (currentIndex + 1 < currentWorkout.length) {
-      const next = currentWorkout[currentIndex + 1];
-      subdetailsEl.textContent =
-        "Prossimo: " +
-        next.label + " " +
-        next.speed.toFixed(1) + " km/h · " + next.incline + "%";
-    } else {
-      subdetailsEl.textContent = "Prossimo: fine allenamento";
-    }
-
-    chipStep.textContent = "Step " + stepNum + " di " + totalSteps;
-
-    const w = weekSelect.value;
-    const s = sessionSelect.value;
-    chipBlock.textContent = describeBlockPattern(w, s);
-  }
-
-  function nextInterval() {
-    currentIndex++;
-    if (currentIndex >= currentWorkout.length) {
-      clearInterval(timerId);
-      timerId = null;
-      running = false;
-      startBtn.disabled = true;
-      pauseBtn.disabled = true;
-      resetBtn.disabled = false;
-      updatePhaseCard();
-      return;
-    }
-    remaining = currentWorkout[currentIndex].seconds;
-    updatePhaseCard();
-  }
-
-  function tick() {
-    if (!running) return;
-    remaining--;
-    if (remaining <= 0) {
-      nextInterval();
-    } else {
-      timeEl.textContent = formatTime(remaining);
-    }
-  }
-
-  function loadSelectedWorkout() {
-    const w = weekSelect.value;
-    const s = sessionSelect.value;
-    currentWorkout = buildWorkout(w, s);
-    const labelWeek = w.replace("W", "Week ");
-    const labelRun = s.replace("A", "Run ");
-    badgeEl.textContent = labelWeek + " · " + labelRun;
-    totalTimeEl.textContent = "Totale: " + computeTotalTime(currentWorkout);
-    chipBlock.textContent = describeBlockPattern(w, s);
-    currentIndex = 0;
-    remaining = 0;
-    started = false;
-    running = false;
-    if (timerId !== null) {
-      clearInterval(timerId);
-      timerId = null;
-    }
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
-    resetBtn.disabled = true;
-    statusEl.textContent = "Pronto";
-    updatePhaseCard();
-  }
-
-  // Eventi selettori
-  weekSelect.addEventListener("change", loadSelectedWorkout);
-  sessionSelect.addEventListener("change", loadSelectedWorkout);
-
-  // Pulsanti timer
-  startBtn.onclick = function () {
-    if (!started) {
-      if (!currentWorkout || currentWorkout.length === 0) {
-        loadSelectedWorkout();
+      } else {
+        return "5' warmup · corsa continua · 5' defaticamento";
       }
-      started = true;
-      currentIndex = 0;
-      remaining = currentWorkout[0].seconds;
+    }
+
+    // Stato timer
+    let currentWorkout = [];
+    let currentIndex = 0;
+    let remaining = 0;
+    let timerId = null;
+    let running = false;
+    let started = false;
+
+    // Elementi DOM
+    const phaseCard = document.getElementById('phaseCard');
+    const phaseLabel = document.getElementById('phaseLabel');
+    const timeEl = document.getElementById('time');
+    const detailsEl = document.getElementById('details');
+    const subdetailsEl = document.getElementById('subdetails');
+    const chipStep = document.getElementById('chipStep');
+    const chipBlock = document.getElementById('chipBlock');
+    const statusEl = document.getElementById('status');
+    const totalTimeEl = document.getElementById('totalTime');
+    const badgeEl = document.getElementById('badge');
+
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    const weekSelect = document.getElementById('weekSelect');
+    const sessionSelect = document.getElementById('sessionSelect');
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return m + ":" + s;
+    }
+
+    function computeTotalTime(blocks) {
+      const totalSec = blocks.reduce((sum, b) => sum + b.seconds, 0);
+      const min = Math.round(totalSec / 60);
+      return "~" + min + " min";
+    }
+
+    function updatePhaseCard() {
+      if (!currentWorkout || currentWorkout.length === 0) {
+        phaseCard.className = "phase-card phase-warmup";
+        phaseLabel.textContent = "Seleziona e premi START";
+        timeEl.textContent = "00:00";
+        detailsEl.textContent = "—";
+        subdetailsEl.textContent = "Prossimo: —";
+        chipStep.textContent = "Step 0 di 0";
+        chipBlock.textContent = "—";
+        return;
+      }
+
+      if (currentIndex >= currentWorkout.length) {
+        phaseCard.className = "phase-card phase-running";
+        phaseLabel.textContent = "Fatto!";
+        timeEl.textContent = "00:00";
+        detailsEl.textContent = "Cammina defaticando se necessario";
+        subdetailsEl.textContent = "Allenamento completato";
+        chipStep.textContent = "Step " + currentWorkout.length + " di " + currentWorkout.length;
+        statusEl.textContent = "Completato";
+        return;
+      }
+
+      const step = currentWorkout[currentIndex];
+      const totalSteps = currentWorkout.length;
+      const stepNum = currentIndex + 1;
+
+      let cls = "phase-card ";
+      if (step.type === "run") cls += "phase-running";
+      else if (step.type === "walk") cls += "phase-walk";
+      else if (step.type === "warmup") cls += "phase-warmup";
+      else if (step.type === "cooldown") cls += "phase-cooldown";
+      phaseCard.className = cls;
+
+      phaseLabel.textContent = step.label;
+      timeEl.textContent = formatTime(remaining);
+      detailsEl.textContent = step.speed.toFixed(1) + " km/h · " + step.incline + "%";
+
+      if (currentIndex + 1 < currentWorkout.length) {
+        const next = currentWorkout[currentIndex + 1];
+        subdetailsEl.textContent =
+          "Prossimo: " +
+          next.label + " " +
+          next.speed.toFixed(1) + " km/h · " + next.incline + "%";
+      } else {
+        subdetailsEl.textContent = "Prossimo: fine allenamento";
+      }
+
+      chipStep.textContent = "Step " + stepNum + " di " + totalSteps;
+
+      const w = weekSelect.value;
+      const s = sessionSelect.value;
+      chipBlock.textContent = describeBlockPattern(w, s);
+    }
+
+    function nextInterval() {
+      currentIndex++;
+      if (currentIndex >= currentWorkout.length) {
+        clearInterval(timerId);
+        timerId = null;
+        running = false;
+        startBtn.disabled = true;
+        pauseBtn.disabled = true;
+        resetBtn.disabled = false;
+
+        // Segna l'allenamento come completato
+        markCurrentWorkoutDone();
+
+        updatePhaseCard();
+        return;
+      }
+
+      remaining = currentWorkout[currentIndex].seconds;
       updatePhaseCard();
-      timerId = setInterval(tick, 1000);
     }
-    running = true;
-    startBtn.disabled = true;
-    pauseBtn.disabled = false;
-    resetBtn.disabled = false;
-    statusEl.textContent = "In corso";
-  };
 
-  pauseBtn.onclick = function () {
-    running = false;
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
-    statusEl.textContent = "In pausa";
-  };
-
-  resetBtn.onclick = function () {
-    running = false;
-    started = false;
-    if (timerId !== null) {
-      clearInterval(timerId);
-      timerId = null;
+    function tick() {
+      if (!running) return;
+      remaining--;
+      if (remaining <= 0) {
+        nextInterval();
+      } else {
+        timeEl.textContent = formatTime(remaining);
+      }
     }
-    currentIndex = 0;
-    remaining = 0;
-    statusEl.textContent = "Pronto";
+
+    function loadSelectedWorkout() {
+      const w = weekSelect.value;
+      const s = sessionSelect.value;
+      currentWorkout = buildWorkout(w, s);
+      const labelWeek = w.replace("W", "Week ");
+      const labelRun = s.replace("A", "Run ");
+      badgeEl.textContent = labelWeek + " · " + labelRun;
+      totalTimeEl.textContent = "Totale: " + computeTotalTime(currentWorkout);
+      chipBlock.textContent = describeBlockPattern(w, s);
+      currentIndex = 0;
+      remaining = 0;
+      started = false;
+      running = false;
+      if (timerId !== null) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      resetBtn.disabled = true;
+      statusEl.textContent = "Pronto";
+
+      refreshSessionLabels();
+
+      updatePhaseCard();
+    }
+
+    // Eventi selettori
+    weekSelect.addEventListener("change", () => {
+      localStorage.setItem("tapis_week", weekSelect.value);
+      loadSelectedWorkout();      // dentro richiama già refreshSessionLabels()
+    });
+
+    sessionSelect.addEventListener("change", () => {
+      localStorage.setItem("tapis_session", sessionSelect.value);
+      loadSelectedWorkout();      // idem: dentro richiama refreshSessionLabels()
+    });
+
+
+    // Pulsanti timer
+    startBtn.onclick = function () {
+      if (!started) {
+        if (!currentWorkout || currentWorkout.length === 0) {
+          loadSelectedWorkout();
+        }
+        started = true;
+        currentIndex = 0;
+        remaining = currentWorkout[0].seconds;
+        updatePhaseCard();
+        timerId = setInterval(tick, 1000);
+      }
+      running = true;
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+      resetBtn.disabled = false;
+      statusEl.textContent = "In corso";
+    };
+
+    pauseBtn.onclick = function () {
+      running = false;
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      statusEl.textContent = "In pausa";
+    };
+
+    resetBtn.onclick = function () {
+      running = false;
+      started = false;
+      if (timerId !== null) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      currentIndex = 0;
+      remaining = 0;
+      statusEl.textContent = "Pronto";
+      loadSelectedWorkout();
+    };
+
+    // Carica ultima scelta salvata (se presente)
+    const savedWeek = localStorage.getItem("tapis_week");
+    const savedSession = localStorage.getItem("tapis_session");
+
+    if (savedWeek) weekSelect.value = savedWeek;
+    if (savedSession) sessionSelect.value = savedSession;
+
+    function getDoneWorkouts() {
+      const raw = localStorage.getItem("tapis_done");
+      if (!raw) return [];
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return [];
+      }
+    }
+
+    function setDoneWorkouts(list) {
+      localStorage.setItem("tapis_done", JSON.stringify(list));
+    }
+
+    function markCurrentWorkoutDone() {
+      const w = weekSelect.value;
+      const s = sessionSelect.value;
+      const key = w + s;
+      const list = getDoneWorkouts();
+      if (!list.includes(key)) {
+        list.push(key);
+        setDoneWorkouts(list);
+      }
+    }
+
+    function refreshSessionLabels() {
+      const done = getDoneWorkouts();
+      const w = weekSelect.value;
+
+      for (const opt of sessionSelect.options) {
+        const baseLabel = opt.value === "A1"
+          ? "Allenamento 1"
+          : opt.value === "A2"
+            ? "Allenamento 2"
+            : "Allenamento 3 (opzionale)";
+
+        const key = w + opt.value;
+        if (done.includes(key)) {
+          opt.textContent = baseLabel + " ✅";
+        } else {
+          opt.textContent = baseLabel;
+        }
+      }
+    }
+
+
+    // Inizializza con selezione corrente (o salvata)
     loadSelectedWorkout();
-  };
-
-  // Inizializza con Week 1 Run 1
-  loadSelectedWorkout();
-</script>
+  </script>
 
 </body>
+
 </html>
